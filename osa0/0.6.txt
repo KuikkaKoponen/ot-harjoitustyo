@@ -1,0 +1,9 @@
+title 0.6: uusi muistiinpano
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa + {content: "viesti", date: "aikaleima"}
+palvelin-->selain: HTTP 201 Created + HTML
+
+note over selain:
+selain suorittaa tapahtumankäsittelijän
+joka renderöi muistiinpanot näytölle
+end note
