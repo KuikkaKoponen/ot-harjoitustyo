@@ -1,58 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
+const App = (props) => {
+  const [left, setLeft] = useState(0)
+  const [right, setRight] = useState(0)
+  const [allClicks, setAll] = useState([]) // tekee tyhjän taulukon
+
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L')) // tekee uuden taulukon kopioi vanhan ja lisää perään L:n
+    setLeft(left + 1)
+  }
+
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R')) // tekee uuden taulukon kopioi vanhan ja lisää perään R:n
+    setRight(right + 1)
+  }
+
   return (
     <div>
-      <Header course={course} /> 
-      <Content part1={part1} part2={part2} part3={part3} exercises1={exercises1} exercises2={exercises2} exercises3={exercises3}  />
-      <Total exercises1={exercises1} exercises2={exercises2} exercises3={exercises3}  />
-    </div>
-  )
-
-}
-
-const Header = (props) => {
-  return (
-    <div>
-      <h1>{props.course}</h1>
-    </div>
-  )
-}
-
-const Content = (props) => {
-  return (
-    <div>
-      <Part part = {props.part1} exercises = {props.exercises1}/>
-      <Part part = {props.part2} exercises = {props.exercises2}/>
-      <Part part = {props.part3} exercises = {props.exercises3}/>
+      <div>
+        {left}
+        <button onClick={handleLeftClick}>left</button>
+        <button onClick={handleRightClick}>right</button>
+        {right}
+        <History allClicks={allClicks} />
+      </div>
     </div>
   )
 }
 
-const Part = (props) => {
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return (
+      <div>
+        the app is used by pressing the buttons
+      </div>
+    )
+  }
+
   return (
     <div>
-      <p>
-        {props.part} {props.exercises}
-      </p>
+      button press history: {props.allClicks.join(' ')}
     </div>
   )
 }
 
-const Total = (props) => {
-  return (
-    <div>
-      <p>Number of exercises {props.exercises1 + props.exercises2 + props.exercises3}</p>
-    </div>
-  )
-}
-
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(
+  <App />, 
+  document.getElementById('root')
+)

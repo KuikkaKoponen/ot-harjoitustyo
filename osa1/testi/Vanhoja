@@ -1,0 +1,90 @@
+import React, { useState } from 'react'
+import ReactDOM from 'react-dom'
+
+const App = (props) => {
+  // counter on tila ja setCounter funktio joka muuttaa counteria
+  const [ counter, setCounter ] = useState(0) // tämän avulla saadaa tila pidettyä tallessa ja muutettua sitä
+
+  const increaseByOne = () => setCounter(counter + 1)
+  const decreaseByOne = () => setCounter(counter - 1)
+  const setToZero = () => setCounter(0)
+
+  return (
+    <div>
+      <Display counter={counter}/>
+      <Button
+        handleClick={increaseByOne}
+        text='plus'
+      />
+      <Button
+        handleClick={setToZero}
+        text='zero'
+      />     
+      <Button
+        handleClick={decreaseByOne}
+        text='minus'
+      />           
+    </div>
+  )
+}
+
+const Button = (props) => {
+  return (
+    <button onClick={props.handleClick}>
+      {props.text}
+    </button>
+  )
+}
+
+const Display = (props) => {
+  return (
+    <div>{props.counter}</div>
+  )
+}
+
+ReactDOM.render(
+  <App />, 
+  document.getElementById('root')
+)
+
+
+import React, { useState } from 'react'
+import ReactDOM from 'react-dom'
+
+const App = (props) => {
+  const [clicks, setClicks] = useState({
+    left: 0, right: 0
+  })
+
+  const handleLeftClick = () => {
+    const newClicks = { 
+      ...clicks, 
+      left: clicks.left + 1 
+    }
+    setClicks(newClicks)
+  }
+  
+  const handleRightClick = () => {
+    const newClicks = { 
+      ...clicks,                // ...clicks kopioi vanhat arvot
+      right: clicks.right + 1   // tässä sitten muutokset
+    }
+    setClicks(newClicks)
+  }
+
+  return (
+    <div>
+      <div>
+        {clicks.left}
+        <button onClick={handleLeftClick}>left</button>
+        <button onClick={handleRightClick}>right</button>
+        {clicks.right}
+      </div>
+    </div>
+  )
+}
+
+ReactDOM.render(
+  <App />, 
+  document.getElementById('root')
+)
