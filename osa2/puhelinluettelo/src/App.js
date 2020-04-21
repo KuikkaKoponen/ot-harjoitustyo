@@ -1,18 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
 import Filter from './components/Filter'
 import Add from './components/Add'
+import axios from 'axios'
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '0500 123 123' },
-    { name: 'Herto Allas', number: '0500 321 321' },
-    { name: 'Teemu Selänne', number: '0100 123 123' }
-  ]) 
-  
+  const [ persons, setPersons] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  
+  console.log('render', persons.length, 'notes')
 
   const handleNoteChange1 = (event) => {
     console.log(event.target.value)
@@ -29,20 +37,20 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
+  // en saanut checkiä toimimaan omassa luokassa
+  const check = () => {
+    console.log('')
+    const filtered = persons.filter(person => person.name === newName)
+    if(filtered.length === 0) {
+      return false
+    } else {
+      return true
+    }
+  }
+
   const addNote = (event) => {
     event.preventDefault()
     console.log(event.target.value)
-
-    // en saanut checkiä toimimaan omassa luokassa
-    const check = () => {
-      console.log('')
-      const filtered = persons.filter(person => person.name === newName)
-      if(filtered.length === 0) {
-        return false
-      } else {
-        return true
-      }
-    }
 
     if (check()) {
       window.alert(`${newName} is already added to phonebook`)
