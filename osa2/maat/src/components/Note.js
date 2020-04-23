@@ -1,16 +1,12 @@
 import React from 'react'
 
-const Note = ({country}) => {
+const Note = ({country, toggleImportance}) => {
     
-    const onSubmit = () => {
-        // tätä en saanut toimimaan
-    }
-
     return (
-        <form onSubmit={onSubmit()}>   
+        <li>   
             {country.name}
-            <button type="submit">show</button>
-        </form>
+            <button onClick={toggleImportance}>Show</button>     
+        </li>
     )
   }
   export default Note

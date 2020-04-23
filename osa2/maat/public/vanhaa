@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import Note from './components/Note'
-
-// käynnistä kutsulla REACT_APP_API_KEY= APIKOODI npm start
-
-const api_key = process.env.REACT_APP_API_KEY
+import Filter from './components/Filter'
 
 const App = () => {
   const [ countries, setCoutries] = useState([]) 
   const [ newList, setNewList ] = useState([])
   const [ newName, setNewName ] = useState('')
-  const [ weather, setWeather ] = useState('')
 
   useEffect(() => {
     console.log('effect')
@@ -40,16 +35,38 @@ const App = () => {
 
   }
 
-  const toggleImportanceOf = (country) => {
-    console.log('nimi pitäisi olla ' + country.name)
-    setNewList([country])
+  const toggleImportanceOf = (name) => {
+    setNewList(countries.map(country => country.name === name))
   }
-
-  const filter = () => {
-    const length = newList.length
-    console.log('Kakkoslistan pituus on ' + length)
-    const list= newList.map(country => country)
   
+  return (
+    
+    <div>
+        <h1>Countries</h1>
+            <div>
+            Find countries:
+            <input 
+            value={newName} 
+            onChange={handleNoteChange}
+            />
+            </div>       
+        <Filter list={newList} />
+    </div> 
+  )
+
+}
+
+export default App
+
+
+
+import React from 'react'
+import Note from './Note'
+
+const Filter = ({list}) => {
+    console.log('jäljellä', list.length)
+    const length = list.length
+
     if(length === 0) { 
         return (
             <ul>
@@ -58,17 +75,7 @@ const App = () => {
         )
     }
     else if(length === 1) {
-      // jostain syystä päivittää kutsua jatkuvalla syötöllä
-      axios
-      .get('http://api.weatherstack.com/current?access_key=' + api_key+ '&query=' + list[0].capital)
-      .then(response => {
-        console.log(response.data.current.weather_descriptions)
-        setWeather(response.data.current.weather_descriptions) 
-      }).catch(error => {
-        console.log('fail')
-      })  
-      
-      return (           
+        return (           
             <div>
                 <h1>{list[0].name}</h1>
                 <ul>
@@ -83,14 +90,13 @@ const App = () => {
                 </ul> 
                 <h2>Flag</h2>           
                 <img src={list[0].flag} width="200" alt='flag' />
-                <h2>Weather now in {list[0].capital} is: {weather}</h2>
             </div>
         )
     } else if(length > 1 && length < 10) {
         return (      
                 <div> 
                     {list.map((country) =>
-                    <Note key={country.name} country={country} toggleImportance = {() => toggleImportanceOf(country)} /> 
+                    <Note key={country.name} country={country} toggleImportance = {toggleImportanceOf(country.name)}  /> 
                     )} 
                 </div>                
         )
@@ -101,23 +107,27 @@ const App = () => {
             </ul> 
         )
     }
+
 }
 
-  return (
+  export default Filter
+
+
+  import React from 'react'
+
+const Note = ({country}) => {
     
-    <div>
-        <h1>Countries</h1>
-            <div>
-            Find countries:
-            <input 
-            value={newName} 
-            onChange={handleNoteChange}
-            />
-            </div>       
-            {filter()}
-    </div> 
-  )
 
-}
+    return (
+        <li>   
+            {country.name}
+              
+        </li>
+    )
+  }
+  export default Note
 
-export default App
+  /*
+
+  <button onClick={toggleImportance}>Show</button>    
+  */
