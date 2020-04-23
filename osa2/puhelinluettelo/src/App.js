@@ -4,11 +4,13 @@ import Filter from './components/Filter'
 import Add from './components/Add'
 import noteService from './services/persons'
 
+
 const App = () => {
   const [ persons, setPersons] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
+  const [ errorMessage, setErrorMessage ] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -36,7 +38,6 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
-  // en saanut checkiä toimimaan omassa luokassa
   const check = () => {
     console.log('')
     const filtered = persons.filter(person => person.name === newName)
@@ -57,25 +58,43 @@ const App = () => {
       const person = {name: newName, number: newNumber, id: id}
       
       if(window.confirm('Henkilö on jo puhelinluettelossa, päivitetäänkö numero?')) {
+        console.log('updated')
         noteService
         .update(id, person).then(returned => {
           setPersons(persons.map(person => person.id !== id ? person : returned))
+          setErrorMessage(
+            `Person '${person.name}' updated`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
         .catch(error => {
-          alert(
-            `the note '${person.name}' was already deleted from server`
+          console.log('error in update')
+          setErrorMessage(
+            `Person '${person.name}' was already deleted from server`
           )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
           setPersons(persons.filter(n => n.id !== id))
         })
       }      
     } else {
       const newPerson = {name: newName, number: newNumber}
+      console.log('new created')
       noteService
         .create(newPerson)
         .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(
+          `Person '${newName}' added`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
 
     }
@@ -91,16 +110,39 @@ const App = () => {
           setPersons(persons.filter(n => n.id !== id))
           setNewName('')
           setNewNumber('')
+          setErrorMessage(
+            `Person '${id}' removed from server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+
       })
       .catch(error => {
-        alert(
-          `person '${id}' is not on the server`
+        console.log('error in delete')
+        setErrorMessage(
+          `Person '${id}' was already removed from server`
         )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setPersons(persons.filter(n => n.id !== id))
       })
     }
     
 
+  }
+
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+  
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
   }
 
 
@@ -109,6 +151,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={errorMessage} />
       <Filter newFilter={newFilter} handleNoteChange3={handleNoteChange3} />
       
       <h2>Add new</h2>
